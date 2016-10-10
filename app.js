@@ -2,9 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-let https = require("https"),
-    axios = require ('axios'),
-    dateFormat = require('dateformat');
+// let axios = require('axios');
+// let dateFormat = require('dateformat');
 
 const lastTenBits = (() => {
   // I use three private variables to maintain state across the module
@@ -16,12 +15,18 @@ const lastTenBits = (() => {
   //This function does two things: sets the exchange rates object
   // and calls a render function
   const setCurrency = (() => {
-    axios.get('https://blockchain.info/ticker')
-      .then(res => {
-        exRates = res.data;
-        renderExchangeRates(exRates);
-      })
-      .catch(err => console.error(err));
+    // require(['axios'], function (axios) {
+    //   axios.get('https://blockchain.info/ticker')
+    //     .then(res => {
+    //       exRates = res.data;
+    //       renderExchangeRates(exRates);
+    //     })
+    //     .catch(err => console.error(err));
+    // });
+    $.get('https://blockchain.info/ticker', res => {
+      exRates = res.data;
+      renderExchangeRates(exRates);
+    });
   })();
 
   //Populates a hidden dropdown menu on the main page with all currencies
@@ -38,26 +43,34 @@ const lastTenBits = (() => {
   //A large list of bitcoin indexes that I then pass to a callback.
   //the callback given is the interpretBitIndexes() function declared below
   let getBitIndexes = function(cb) {
-    let data = "";
-
-    https.get('https://blockchain.info/latestblock', (res) => {
-      if (res.statusCode === 200) {
-        res.on('data', function (chunk) {
-          data += chunk;
-        });
-
-        res.on('end', function() {
-           data = JSON.parse(data);
-
-           cb(res.statusCode, data);
-        });
-      } else
-        console.error("Error. Status ", res.statusCode);
-
-      res.resume();
-    }).on('error', (e) => {
-      console.error(`Got error: ${e.message}`);
+    // let data = "";
+    require(['axios'], function(axios) {
+      axios.get('https://blockchain.info/latestblock')
+        .then(res => {
+          console.log("dong dong dong");
+          cb(res.status, res.data);
+        })
+        .catch(err => console.error(err));
     });
+
+    // https.get('https://blockchain.info/latestblock', (res) => {
+    //   if (res.statusCode === 200) {
+    //     res.on('data', function (chunk) {
+    //       data += chunk;
+    //     });
+    //
+    //     res.on('end', function() {
+    //        data = JSON.parse(data);
+    //
+    //        cb(res.statusCode, data);
+    //     });
+    //   } else
+    //     console.error("Error. Status ", res.statusCode);
+    //
+    //   res.resume();
+    // }).on('error', (e) => {
+    //   console.error(`Got error: ${e.message}`);
+    // });
   };
 
   //Takes the first ten elements in an array of bitcoin transaction indexes and

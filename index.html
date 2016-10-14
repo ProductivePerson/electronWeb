@@ -2,25 +2,26 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Capco Challenge: Last ten bitcoin transactions</title>
+    <title>Last ten bitcoin transactions</title>
 
     <link rel="stylesheet" href="./style/jquery.flipster.min.css">
     <link rel="stylesheet" href="./style/style.css">
 
   </head>
   <body>
-
-    <select id="exchangeRates" onchange="app.toggleCurrency()" hidden="true">
+    <div id='app' />
+    <!-- <select id="exchangeRates" onchange="app.toggleCurrency()" hidden="true">
     </select>
     <div class="flipster">
       <ul>
       </ul>
-    </div>
+    </div> -->
   </body>
   <!-- <script>window.$ = window.jQuery = require('./js/jquery.min.js');</script> -->
   <script src="./js/jquery.min.js" ></script>
-  <script src="./js/require.min.js"></script>
-  <script src="./app.js" ></script>
+  <script src="/dist/bundle.js"></script>
+  <!-- <script src="./dist/app.js" ></script> -->
+  <!-- <script src="./bundle.js"></script> -->
   <script src="./js/jquery.flipster.min.js"></script>
   <script>
 

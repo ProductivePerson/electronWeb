@@ -9,9 +9,9 @@ const babel = require('gulp-babel');
 const watch = require('gulp-watch');
 
 // gulp default to test if it works.
-gulp.task('default', function() {
-  console.log('GULP works!');
-});
+gulp.task('default', shell.task([
+  'gulp babel browserify watch'])
+);
 
 // gulp babel to compile components.
 gulp.task('babel', function() {

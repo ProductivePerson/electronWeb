@@ -41,28 +41,28 @@ var App = function (_React$Component) {
 
     _this.state = {
       currency: "USD",
-      exRates: [],
+      exRates: {},
       currData: [],
       txData: []
     };
 
-    _this.setCurrency = _this.setCurrency.bind(_this);
-    _this.setCurrency();
-
+    // this.setCurrency = this.setCurrency.bind(this);
     return _this;
   }
 
   _createClass(App, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.getBitIndexes(this.interpretBitIndexes);
+      this.setCurrency();
+    }
+  }, {
     key: 'setCurrency',
     value: function setCurrency() {
       var _this2 = this;
 
-      console.log("HERE, time to play");
       _axios2.default.get('/exRates').then(function (res) {
-        console.log("ding ding ding", res.data);
         _this2.setState({ exRates: res.data });
-        console.log("TESTING ", _this2.state);
-        renderExchangeRates(exRates);
       }).catch(function (err) {
         return console.error(err);
       });
@@ -70,7 +70,8 @@ var App = function (_React$Component) {
   }, {
     key: 'toggleCurrency',
     value: function toggleCurrency(e) {
-      console.log("Here we go", e.target);
+      console.log("Here we go", e.target.value);
+      this.setState({ currency: e.target.value });
       // CURRENCY = $('#exchangeRates').val();
       //
       // $('.bCoinVal').text((idx) => {
@@ -109,14 +110,17 @@ var CurrencySelect = function (_React$Component2) {
   _createClass(CurrencySelect, [{
     key: 'render',
     value: function render() {
+      var exRates = this.props.exRates;
+
+
       return _react2.default.createElement(
         'select',
         { id: 'exchangeRates',
-          onChange: this.props.toggleCurrency, hidden: 'true' },
-        this.props.exRates.map(function (country) {
+          onChange: this.props.toggleCurrency },
+        Object.keys(this.props.exRates).map(function (country, key) {
           return _react2.default.createElement(
             'option',
-            { name: country, value: country },
+            { key: key, name: country, value: country },
             country
           );
         })

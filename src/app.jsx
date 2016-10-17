@@ -8,30 +8,30 @@ class App extends React.Component {
     super(props);
     this.state = {
       currency: "USD",
-      exRates: [],
+      exRates: {},
       currData: [],
       txData: []
     };
 
-    this.setCurrency = this.setCurrency.bind(this);
-    this.setCurrency();
+    // this.setCurrency = this.setCurrency.bind(this);
+  }
 
+  componentDidMount() {
+    this.getBitIndexes(this.interpretBitIndexes);
+    this.setCurrency();
   }
 
   setCurrency() {
-    console.log("HERE, time to play");
     axios.get('/exRates')
         .then(res => {
-          console.log("ding ding ding", res.data);
           this.setState({exRates: res.data});
-          console.log("TESTING ", this.state);
-          renderExchangeRates(exRates);
         })
         .catch(err => console.error(err));
   }
 
   toggleCurrency(e){
-    console.log("Here we go", e.target);
+    console.log("Here we go", e.target.value);
+    this.setState({currency: e.target.value});
     // CURRENCY = $('#exchangeRates').val();
     //
     // $('.bCoinVal').text((idx) => {
@@ -58,11 +58,19 @@ class CurrencySelect extends React.Component {
     super(props);
   }
   render() {
+    const { exRates } = this.props;
+
     return <select id="exchangeRates"
-        onChange={this.props.toggleCurrency} hidden="true" >
-          {this.props.exRates.map(country =>
+        onChange={this.props.toggleCurrency}>
+          {
+            Object.keys(this.props.exRates).map((country, key) =>
+              <option key={key} name={country} value={country}>
+                {country}
+              </option>)
+          }
+          {/* {this.props.exRates.map(country =>
             <option name={country} value={country}>{country}</option>
-          )}
+          )} */}
         </select>;
   }
 }

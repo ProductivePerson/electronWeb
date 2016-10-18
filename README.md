@@ -6,6 +6,7 @@ This app uses three main dependencies:
  - React for
  - jQueryFlipster for the fun carousel display style
  - Axios to server API calls
+ - Gulp for compiling React code and automating deployment
 
 **Design Decisions**
 

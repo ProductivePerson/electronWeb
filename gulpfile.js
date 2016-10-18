@@ -1,12 +1,14 @@
-const gulp = require('gulp');
-const browserify = require('gulp-browserify');
-const webpack = require('gulp-webpack');
-const gutil = require('gulp-util');
-const rename = require('gulp-rename');
-const shell = require('gulp-shell');
-const webpackConfig = require('./webpack.config.js');
-const babel = require('gulp-babel');
-const watch = require('gulp-watch');
+const gulp = require('gulp'),
+      browserify = require('gulp-browserify'),
+      webpack = require('gulp-webpack'),
+      gutil = require('gulp-util'),
+      rename = require('gulp-rename'),
+      shell = require('gulp-shell'),
+      babel = require('gulp-babel'),
+      watch = require('gulp-watch'),
+      uglify = require('gulp-uglify'),
+      pump = require('pump'),
+      webpackConfig = require('./webpack.config.js');
 
 // gulp default to test if it works.
 gulp.task('default', shell.task([
@@ -46,10 +48,21 @@ gulp.task('watch', function() {
   gulp.watch('./src/*.jsx', ['babel', 'browserify']);
 });
 
+gulp.task('compress', function (cb) {
+  pump([
+        gulp.src('dist/bundle.js'),
+        uglify(),
+        gulp.dest('dist')
+    ],
+    cb
+  );
+});
+
 // gulp heroku for Heroku shell commands.
 // Be sure to login to Heroku, clone repo, create, add, commit
 // before calling this task.
-gulp.task('heroku', shell.task([
+gulp.task('deploy', shell.task([
+  'gulp babel browserify compress',
   'git push heroku master',
   'heroku open'
 ]));

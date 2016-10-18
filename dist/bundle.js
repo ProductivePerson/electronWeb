@@ -53,18 +53,29 @@ var App = function (_React$Component) {
   _createClass(App, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.getBitIndexes(this.interpretBitIndexes);
+      this.getBitIndexes();
       this.setCurrency();
+    }
+  }, {
+    key: 'getBitIndexes',
+    value: function getBitIndexes() {
+      var _this2 = this;
+
+      _axios2.default.get('/get/latestBlock').then(function (res) {
+        _this2.setState({ txData: res.data });
+      }).catch(function (err) {
+        return console.error("Error in getBitIndexes: ", err);
+      });
     }
   }, {
     key: 'setCurrency',
     value: function setCurrency() {
-      var _this2 = this;
+      var _this3 = this;
 
-      _axios2.default.get('/exRates').then(function (res) {
-        _this2.setState({ exRates: res.data });
+      _axios2.default.get('/get/exRates').then(function (res) {
+        _this3.setState({ exRates: res.data });
       }).catch(function (err) {
-        return console.error(err);
+        return console.error("Error in setCurrency: ", err);
       });
     }
   }, {
@@ -90,7 +101,12 @@ var App = function (_React$Component) {
           'HERE HERE HERE'
         ),
         _react2.default.createElement(CurrencySelect, {
-          toggleCurrency: this.toggleCurrency, exRates: this.state.exRates })
+          toggleCurrency: this.toggleCurrency, exRates: this.state.exRates }),
+        _react2.default.createElement(LastTenBits, {
+          txData: this.state.txData,
+          currency: this.state.currency,
+          exRates: this.state.exRates
+        })
       );
     }
   }]);
@@ -134,28 +150,68 @@ var CurrencySelect = function (_React$Component2) {
 var LastTenBits = function (_React$Component3) {
   _inherits(LastTenBits, _React$Component3);
 
-  function LastTenBits() {
+  function LastTenBits(props) {
     _classCallCheck(this, LastTenBits);
 
-    return _possibleConstructorReturn(this, (LastTenBits.__proto__ || Object.getPrototypeOf(LastTenBits)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (LastTenBits.__proto__ || Object.getPrototypeOf(LastTenBits)).call(this, props));
   }
 
   _createClass(LastTenBits, [{
     key: 'render',
     value: function render() {
+      console.log("Testing: props are", this.props);
       return _react2.default.createElement(
         'div',
-        null,
+        { className: 'flipster' },
         _react2.default.createElement(
-          'h1',
+          'ul',
           null,
-          'City: Anywhere'
+          this.props.txData.map(function (tx, key) {
+            _react2.default.createElement(
+              'li',
+              null,
+              'DO SOMETHING',
+              _react2.default.createElement('singleExchange', { tx: tx })
+            );
+          })
         )
       );
     }
   }]);
 
   return LastTenBits;
+}(_react2.default.Component);
+
+var singleExchange = function (_React$Component4) {
+  _inherits(singleExchange, _React$Component4);
+
+  function singleExchange(props) {
+    _classCallCheck(this, singleExchange);
+
+    return _possibleConstructorReturn(this, (singleExchange.__proto__ || Object.getPrototypeOf(singleExchange)).call(this, props));
+  }
+
+  _createClass(singleExchange, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { 'class': 'transaction', title: this.props.tx.address },
+        _react2.default.createElement(
+          'p',
+          { 'class': 'bCoinTime' },
+          'A thing'
+        ),
+        _react2.default.createElement(
+          'p',
+          { 'class': 'bCoinVal' },
+          'Another Thing'
+        )
+      );
+    }
+  }]);
+
+  return singleExchange;
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));

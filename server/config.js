@@ -12,17 +12,42 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/exRates', function (req, res) {
+app.get('/get/exRates', function (req, res) {
   axios.get('https://blockchain.info/ticker')
-      .then(response => {
-        res.json(response.data);
+      .then(tickerResponse => {
+        res.json(tickerResponse.data);
       })
-      .catch(err => console.error("ERROR", err));
+      .catch(err => console.error("\nERROR in api.get: exRates", err));
 });
 
-app.get('/latestBlock', (req, res) => {
-  axios.get('https://blockchain.info/rawtx/')
+app.get('/get/latestBlock', (req, res) => {
+  axios.get('https://blockchain.info/latestblock')
+    .then(response => {
+      interpretBitIndexes(response.data, res);
+    })
+    .catch(err => console.error("\nERROR in app.get: latestBlock", err));
 });
 
+const interpretBitIndexes = (data, res) => {
+  const url = 'https://blockchain.info/rawtx/';
+  var tenTransactions = [];
+
+  data.txIndexes.slice(0, 10).forEach(txIndex =>
+    axios.get(url + txIndex)
+      .then(response => {
+        response.data.out.forEach((transaction, index) => {
+          transaction.time = response.time;
+          tenTransactions.push(transaction);
+          transaction.index = tenTransactions.length;
+
+          if (tenTransactions.length === 10)
+            res.json(tenTransactions);
+        });
+      })
+      .catch(err => console.error("\nERROR in interpretBitIndexes", err))
+  );
+
+  return tenTransactions;
+};
 
 module.exports = app;

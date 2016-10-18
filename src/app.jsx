@@ -17,16 +17,24 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.getBitIndexes(this.interpretBitIndexes);
+    this.getBitIndexes();
     this.setCurrency();
   }
 
+  getBitIndexes() {
+    axios.get('/get/latestBlock')
+      .then(res => {
+        this.setState({txData: res.data});
+      })
+      .catch(err => console.error("Error in getBitIndexes: ", err));
+  }
+
   setCurrency() {
-    axios.get('/exRates')
+    axios.get('/get/exRates')
         .then(res => {
           this.setState({exRates: res.data});
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error("Error in setCurrency: ", err));
   }
 
   toggleCurrency(e){
@@ -44,7 +52,11 @@ class App extends React.Component {
       <h1>HERE HERE HERE</h1>
       <CurrencySelect
         toggleCurrency = {this.toggleCurrency} exRates={this.state.exRates} />
-      {/* <LastTenBits /> */}
+      <LastTenBits
+        txData = {this.state.txData}
+        currency = {this.state.currency}
+        exRates = {this.state.exRates}
+        />
       {/* <div className="flipster">
         <ul>
         </ul>
@@ -76,10 +88,37 @@ class CurrencySelect extends React.Component {
 }
 
 class LastTenBits extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
-    return <div>
-        <h1>City: Anywhere</h1>
-      </div>;
+    console.log("Testing: props are", this.props);
+    return <div className="flipster">
+            <ul>
+            {
+              this.props.txData.map((tx, key) => {
+                <li>
+                    DO SOMETHING
+                    <singleExchange tx={tx}/>
+                </li>;
+              })
+            }
+            </ul>
+          </div>;
+  }
+}
+
+class singleExchange extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return <div class="transaction" title={this.props.tx.address}>
+              <p class="bCoinTime">A thing</p>
+              <p class="bCoinVal">Another Thing</p>
+           </div>;
   }
 }
 

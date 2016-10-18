@@ -12,7 +12,7 @@ class App extends React.Component {
       currData: []
     };
 
-    // this.setCurrency = this.setCurrency.bind(this);
+    this.toggleCurrency = this.toggleCurrency.bind(this);
   }
 
   componentDidMount() {
@@ -37,13 +37,7 @@ class App extends React.Component {
   }
 
   toggleCurrency(e){
-    console.log("Here we go", e.target.value);
     this.setState({currency: e.target.value});
-    // CURRENCY = $('#exchangeRates').val();
-    //
-    // $('.bCoinVal').text((idx) => {
-    //   return generateValue(txData[idx].value);
-    // });
   }
 
   render() {
@@ -123,13 +117,6 @@ class LastTenBits extends React.Component {
 class SingleExchange extends React.Component {
   constructor(props) {
     super(props);
-
-    const txDate = new Date(this.props.data.time);
-    // this.setState({
-      // formattedDate: dateformat(txDate, "longTime"),
-      // type: this.props.data.spent ? 'Expense' : 'Transfer',
-      // value: this.generateValue(this.props.data.value)
-    // });
   }
 
   componentWillReceiveProps(newProps) {
@@ -148,12 +135,11 @@ class SingleExchange extends React.Component {
   render() {
     const { data } = this.props,
           formattedDate = dateformat(new Date(data.time), "longTime"),
-          type = data.spent ? 'Expense' : 'Transfer',
-          value = this.generateValue(data.value);
+          type = data.spent ? 'Expense' : 'Transfer';
 
     return <div className="transaction">
               <p className="bCoinTime">{type} #{data.index} at {formattedDate}</p>
-              <p className="bCoinVal">{value}</p>
+              <p className="bCoinVal">{this.generateValue(data.value)}</p>
            </div>;
   }
 }

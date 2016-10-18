@@ -46,7 +46,7 @@ var App = function (_React$Component) {
       currData: []
     };
 
-    // this.setCurrency = this.setCurrency.bind(this);
+    _this.toggleCurrency = _this.toggleCurrency.bind(_this);
     return _this;
   }
 
@@ -81,13 +81,7 @@ var App = function (_React$Component) {
   }, {
     key: 'toggleCurrency',
     value: function toggleCurrency(e) {
-      console.log("Here we go", e.target.value);
       this.setState({ currency: e.target.value });
-      // CURRENCY = $('#exchangeRates').val();
-      //
-      // $('.bCoinVal').text((idx) => {
-      //   return generateValue(txData[idx].value);
-      // });
     }
   }, {
     key: 'render',
@@ -219,15 +213,7 @@ var SingleExchange = function (_React$Component4) {
   function SingleExchange(props) {
     _classCallCheck(this, SingleExchange);
 
-    var _this7 = _possibleConstructorReturn(this, (SingleExchange.__proto__ || Object.getPrototypeOf(SingleExchange)).call(this, props));
-
-    var txDate = new Date(_this7.props.data.time);
-    // this.setState({
-    // formattedDate: dateformat(txDate, "longTime"),
-    // type: this.props.data.spent ? 'Expense' : 'Transfer',
-    // value: this.generateValue(this.props.data.value)
-    // });
-    return _this7;
+    return _possibleConstructorReturn(this, (SingleExchange.__proto__ || Object.getPrototypeOf(SingleExchange)).call(this, props));
   }
 
   _createClass(SingleExchange, [{
@@ -253,7 +239,6 @@ var SingleExchange = function (_React$Component4) {
       var data = this.props.data;
       var formattedDate = (0, _dateFormat2.default)(new Date(data.time), "longTime");
       var type = data.spent ? 'Expense' : 'Transfer';
-      var value = this.generateValue(data.value);
 
       return _react2.default.createElement(
         'div',
@@ -270,7 +255,7 @@ var SingleExchange = function (_React$Component4) {
         _react2.default.createElement(
           'p',
           { className: 'bCoinVal' },
-          value
+          this.generateValue(data.value)
         )
       );
     }

@@ -36,7 +36,7 @@ const interpretBitIndexes = (data, res) => {
     axios.get(url + txIndex)
       .then(response => {
         response.data.out.forEach((transaction, index) => {
-          transaction.time = response.time;
+          transaction.time = response.data.time;
           tenTransactions.push(transaction);
           transaction.index = tenTransactions.length;
 

@@ -9,8 +9,7 @@ class App extends React.Component {
     this.state = {
       currency: "USD",
       exRates: {},
-      currData: [],
-      txData: []
+      currData: []
     };
 
     // this.setCurrency = this.setCurrency.bind(this);
@@ -49,18 +48,13 @@ class App extends React.Component {
 
   render() {
     return <div id="lastTen">
-      <h1>HERE HERE HERE</h1>
       <CurrencySelect
         toggleCurrency = {this.toggleCurrency} exRates={this.state.exRates} />
-      <LastTenBits
-        txData = {this.state.txData}
-        currency = {this.state.currency}
-        exRates = {this.state.exRates}
-        />
-      {/* <div className="flipster">
-        <ul>
-        </ul>
-      </div> */}
+      {this.state.txData &&
+        <LastTenBits txData = {this.state.txData}
+          currency = {this.state.currency}
+          exRates = {this.state.exRates} />
+      }
     </div>;
   }
 }
@@ -72,7 +66,7 @@ class CurrencySelect extends React.Component {
   render() {
     const { exRates } = this.props;
 
-    return <select id="exchangeRates"
+    return <select id="exchangeRates" hidden="true"
         onChange={this.props.toggleCurrency}>
           {
             Object.keys(this.props.exRates).map((country, key) =>
@@ -80,9 +74,6 @@ class CurrencySelect extends React.Component {
                 {country}
               </option>)
           }
-          {/* {this.props.exRates.map(country =>
-            <option name={country} value={country}>{country}</option>
-          )} */}
         </select>;
   }
 }
@@ -92,32 +83,77 @@ class LastTenBits extends React.Component {
     super(props);
   }
 
+  initializeFlipster() {
+    console.log("ding ding flipster starts", this.props.txData[3]);
+    $('.flipster').flipster({
+        style: 'carousel',
+        start: 0
+    });
+    $('#exchangeRates, #links').fadeIn(1000);
+  }
+
+  componentDidMount() {
+    this.initializeFlipster();
+  }
+
+  renderSingleExchange(data) {
+    return <div className="transaction">
+              <p className="bCoinTime">A thing</p>
+              <p className="bCoinVal">Another Thing</p>
+           </div>;
+  }
   render() {
-    console.log("Testing: props are", this.props);
+    const { exRates, currency } = this.props;
+
     return <div className="flipster">
             <ul>
             {
-              this.props.txData.map((tx, key) => {
-                <li>
-                    DO SOMETHING
-                    <singleExchange tx={tx}/>
-                </li>;
-              })
+              this.props.txData.map((data, key) =>
+                <li key={key}>
+                  {/* {this.renderSingleExchange(data)} */}
+                    <SingleExchange data={data} {...this.props}/>
+                </li>
+              )
             }
             </ul>
           </div>;
   }
 }
 
-class singleExchange extends React.Component {
+class SingleExchange extends React.Component {
   constructor(props) {
     super(props);
+
+    const txDate = new Date(this.props.data.time);
+    // this.setState({
+      // formattedDate: dateformat(txDate, "longTime"),
+      // type: this.props.data.spent ? 'Expense' : 'Transfer',
+      // value: this.generateValue(this.props.data.value)
+    // });
+  }
+
+  componentWillReceiveProps(newProps) {
+      if (newProps.currency) {
+        this.setState({value: this.generateValue(this.props.data.value)});
+      }
+  }
+
+  generateValue(num) {
+    const { exRates, currency } = this.props;
+
+    return exRates[currency].symbol +
+      (num / 100000000 * exRates[currency]['15m']).toFixed(2);
   }
 
   render() {
-    return <div class="transaction" title={this.props.tx.address}>
-              <p class="bCoinTime">A thing</p>
-              <p class="bCoinVal">Another Thing</p>
+    const { data } = this.props,
+          formattedDate = dateformat(new Date(data.time), "longTime"),
+          type = data.spent ? 'Expense' : 'Transfer',
+          value = this.generateValue(data.value);
+
+    return <div className="transaction">
+              <p className="bCoinTime">{type} #{data.index} at {formattedDate}</p>
+              <p className="bCoinVal">{value}</p>
            </div>;
   }
 }

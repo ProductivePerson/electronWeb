@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _axios = require('axios');
@@ -41,8 +43,7 @@ var App = function (_React$Component) {
     _this.state = {
       currency: "USD",
       exRates: {},
-      currData: [],
-      txData: []
+      currData: []
     };
 
     // this.setCurrency = this.setCurrency.bind(this);
@@ -94,18 +95,11 @@ var App = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { id: 'lastTen' },
-        _react2.default.createElement(
-          'h1',
-          null,
-          'HERE HERE HERE'
-        ),
         _react2.default.createElement(CurrencySelect, {
           toggleCurrency: this.toggleCurrency, exRates: this.state.exRates }),
-        _react2.default.createElement(LastTenBits, {
-          txData: this.state.txData,
+        this.state.txData && _react2.default.createElement(LastTenBits, { txData: this.state.txData,
           currency: this.state.currency,
-          exRates: this.state.exRates
-        })
+          exRates: this.state.exRates })
       );
     }
   }]);
@@ -130,7 +124,7 @@ var CurrencySelect = function (_React$Component2) {
 
       return _react2.default.createElement(
         'select',
-        { id: 'exchangeRates',
+        { id: 'exchangeRates', hidden: 'true',
           onChange: this.props.toggleCurrency },
         Object.keys(this.props.exRates).map(function (country, key) {
           return _react2.default.createElement(
@@ -156,21 +150,59 @@ var LastTenBits = function (_React$Component3) {
   }
 
   _createClass(LastTenBits, [{
+    key: 'initializeFlipster',
+    value: function initializeFlipster() {
+      console.log("ding ding flipster starts", this.props.txData[3]);
+      $('.flipster').flipster({
+        style: 'carousel',
+        start: 0
+      });
+      $('#exchangeRates, #links').fadeIn(1000);
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.initializeFlipster();
+    }
+  }, {
+    key: 'renderSingleExchange',
+    value: function renderSingleExchange(data) {
+      return _react2.default.createElement(
+        'div',
+        { className: 'transaction' },
+        _react2.default.createElement(
+          'p',
+          { className: 'bCoinTime' },
+          'A thing'
+        ),
+        _react2.default.createElement(
+          'p',
+          { className: 'bCoinVal' },
+          'Another Thing'
+        )
+      );
+    }
+  }, {
     key: 'render',
     value: function render() {
-      console.log("Testing: props are", this.props);
+      var _this6 = this;
+
+      var _props = this.props;
+      var exRates = _props.exRates;
+      var currency = _props.currency;
+
+
       return _react2.default.createElement(
         'div',
         { className: 'flipster' },
         _react2.default.createElement(
           'ul',
           null,
-          this.props.txData.map(function (tx, key) {
-            _react2.default.createElement(
+          this.props.txData.map(function (data, key) {
+            return _react2.default.createElement(
               'li',
-              null,
-              'DO SOMETHING',
-              _react2.default.createElement('singleExchange', { tx: tx })
+              { key: key },
+              _react2.default.createElement(SingleExchange, _extends({ data: data }, _this6.props))
             );
           })
         )
@@ -181,36 +213,70 @@ var LastTenBits = function (_React$Component3) {
   return LastTenBits;
 }(_react2.default.Component);
 
-var singleExchange = function (_React$Component4) {
-  _inherits(singleExchange, _React$Component4);
+var SingleExchange = function (_React$Component4) {
+  _inherits(SingleExchange, _React$Component4);
 
-  function singleExchange(props) {
-    _classCallCheck(this, singleExchange);
+  function SingleExchange(props) {
+    _classCallCheck(this, SingleExchange);
 
-    return _possibleConstructorReturn(this, (singleExchange.__proto__ || Object.getPrototypeOf(singleExchange)).call(this, props));
+    var _this7 = _possibleConstructorReturn(this, (SingleExchange.__proto__ || Object.getPrototypeOf(SingleExchange)).call(this, props));
+
+    var txDate = new Date(_this7.props.data.time);
+    // this.setState({
+    // formattedDate: dateformat(txDate, "longTime"),
+    // type: this.props.data.spent ? 'Expense' : 'Transfer',
+    // value: this.generateValue(this.props.data.value)
+    // });
+    return _this7;
   }
 
-  _createClass(singleExchange, [{
+  _createClass(SingleExchange, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(newProps) {
+      if (newProps.currency) {
+        this.setState({ value: this.generateValue(this.props.data.value) });
+      }
+    }
+  }, {
+    key: 'generateValue',
+    value: function generateValue(num) {
+      var _props2 = this.props;
+      var exRates = _props2.exRates;
+      var currency = _props2.currency;
+
+
+      return exRates[currency].symbol + (num / 100000000 * exRates[currency]['15m']).toFixed(2);
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var data = this.props.data;
+      var formattedDate = (0, _dateFormat2.default)(new Date(data.time), "longTime");
+      var type = data.spent ? 'Expense' : 'Transfer';
+      var value = this.generateValue(data.value);
+
       return _react2.default.createElement(
         'div',
-        { 'class': 'transaction', title: this.props.tx.address },
+        { className: 'transaction' },
         _react2.default.createElement(
           'p',
-          { 'class': 'bCoinTime' },
-          'A thing'
+          { className: 'bCoinTime' },
+          type,
+          ' #',
+          data.index,
+          ' at ',
+          formattedDate
         ),
         _react2.default.createElement(
           'p',
-          { 'class': 'bCoinVal' },
-          'Another Thing'
+          { className: 'bCoinVal' },
+          value
         )
       );
     }
   }]);
 
-  return singleExchange;
+  return SingleExchange;
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));

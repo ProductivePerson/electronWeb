@@ -237,7 +237,7 @@ var SingleExchange = function (_React$Component4) {
     key: 'render',
     value: function render() {
       var data = this.props.data;
-      var formattedDate = (0, _dateFormat2.default)(new Date(data.time), "longTime");
+      var formattedDate = (0, _dateFormat2.default)(new Date(data.time * 1000), "mmmm dS, h:MM:ss TT");
       var type = data.spent ? 'Expense' : 'Transfer';
 
       return _react2.default.createElement(

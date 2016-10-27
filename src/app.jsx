@@ -133,7 +133,7 @@ class SingleExchange extends React.Component {
 
   render() {
     const { data } = this.props,
-          formattedDate = dateformat(new Date(data.time), "longTime"),
+          formattedDate = dateformat(new Date(data.time * 1000), "mmmm dS, h:MM:ss TT"),
           type = data.spent ? 'Expense' : 'Transfer';
 
     return <div className="transaction">

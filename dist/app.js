@@ -146,7 +146,6 @@ var LastTenBits = function (_React$Component3) {
   _createClass(LastTenBits, [{
     key: 'initializeFlipster',
     value: function initializeFlipster() {
-      console.log("ding ding flipster starts", this.props.txData[3]);
       $('.flipster').flipster({
         style: 'carousel',
         start: 0

@@ -78,7 +78,6 @@ class LastTenBits extends React.Component {
   }
 
   initializeFlipster() {
-    console.log("ding ding flipster starts", this.props.txData[3]);
     $('.flipster').flipster({
         style: 'carousel',
         start: 0

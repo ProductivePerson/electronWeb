@@ -2,7 +2,7 @@
 
 **Design an application that displays the last ten bitcoin transactions**
 
-This app uses three main dependencies:
+This app uses four main dependencies:
  - React for
  - jQueryFlipster for the fun carousel display style
  - Axios to server API calls
@@ -22,6 +22,7 @@ wanted to be able to deploy my application to the web for review.
 
 ## Links
 
+- [deployed heroku version](https://last-ten-bitcoin-transactions.herokuapp.com)
 - [github](https://github.com/ProductivePerson)
 - [linkedin](https://www.linkedin.com/)
 
